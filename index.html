@@ -1,0 +1,85 @@
+<html>
+  <body>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- v-scope value can be omitted -->
+    <div id="app">
+      <div style="display: flex">
+        <div style="margin-right: 20px; font-size: xx-large">
+          <div v-for="(shelf, index) in shelves">
+            <label :for="index">{{ index }} </label>
+            <select :name="index" :id="index" v-model="shelf.slot">
+              <option v-for="option in options" :value="option">
+                {{option}}
+              </option>
+            </select>
+          </div>
+
+          <button @click="remove()">remove</button>
+          <button @click="add()">add</button>
+        </div>
+        <svg id="canvas" :width="scaledWidth" :height="scaledHeight">
+          <rect
+            x="0"
+            y="0"
+            :width="scaledWidth"
+            :height="scaledHeight"
+            style="
+              fill: rgb(255, 255, 255);
+              stroke-width: 10;
+              stroke: rgb(0, 0, 0);
+            "
+          />
+
+          <rect
+            v-for="(shelf, index) in shelves"
+            :x="0"
+            :y="shelf.slot * this.scale"
+            :width="scaledWidth"
+            :height="18 * this.scale"
+          />
+        </svg>
+      </div>
+    </div>
+
+    <script>
+      const { createApp, ref } = Vue;
+
+      createApp({
+        data() {
+          return {
+            realHeight: 1900,
+            realWidth: 460,
+            scale: 0.5,
+
+            // exposed to all expressions
+            shelves: [{ slot: 0 }],
+            options: [
+              191, 287, 384, 479, 574, 670, 767, 863, 960, 1055, 1150, 1246,
+              1340, 1440, 1535, 1633, 1725,
+            ],
+          };
+        },
+        computed: {
+          scaledHeight() {
+            return this.scale * this.realHeight;
+          },
+          scaledWidth() {
+            return this.scale * this.realWidth;
+          },
+        },
+        methods: {
+          add() {
+            this.shelves.push({ slot: 0 });
+          },
+          remove() {
+            this.shelves.pop();
+          },
+          calc(number) {
+            return this.scale * number;
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
